@@ -1,0 +1,38 @@
+{
+  "$schema": "https://glama.ai/schemas/mcp.json",
+  "name": "WifiSenseBox",
+  "description": "Privacy-first ambient sensing: GDPR-compliant WiFi sensing and radar for senior care, smart homes, and industrial safety.",
+  "version": "1.0.0",
+  "homepage": "https://wifisensebox.com/",
+  "repository": "https://github.com/JustinGuese/WifiSenseBox-site",
+  "license": "MIT",
+  "author": {
+    "name": "WifiSenseBox",
+    "url": "https://wifisensebox.com/"
+  },
+  "icon": "https://wifisensebox.com/favicon.svg",
+  "categories": [
+    "iot",
+    "privacy",
+    "security",
+    "health",
+    "analytics"
+  ],
+  "keywords": [
+    "wifi-sensing",
+    "radar",
+    "privacy",
+    "gdpr",
+    "senior-care",
+    "fall-detection",
+    "smart-home",
+    "retail-analytics"
+  ],
+  "server": {
+    "type": "remote",
+    "url": "https://api.wifisensebox.com/mcp",
+    "transport": "http"
+  },
+  "documentation": "https://wifisensebox.com/en/how-it-works/",
+  "examples": "https://wifisensebox.com/en/usecases/"
+}

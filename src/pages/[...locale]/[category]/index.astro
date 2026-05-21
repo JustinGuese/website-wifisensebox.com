@@ -1,0 +1,93 @@
+---
+import Site from '../../../layouts/Site.astro';
+import Hero from '../../../components/Hero.astro';
+import UseCaseCard from '../../../components/UseCaseCard.astro';
+import CategoryNav from '../../../components/CategoryNav.astro';
+import PriceTable from '../../../components/PriceTable.astro';
+import WaitlistForm from '../../../components/WaitlistForm.astro';
+import { getCollection, render } from 'astro:content';
+import { defaultLocale, useTranslations } from '../../../i18n/t';
+
+export async function getStaticPaths() {
+  const categories = await getCollection('categories');
+  return categories.map(cat => {
+    const locale = cat.data.locale;
+    const categoryId = cat.id.endsWith(locale) && locale !== 'en' ? cat.id.slice(0, -locale.length) : cat.id;
+    
+    return {
+      params: { 
+        locale: locale === 'en' ? undefined : 'de', 
+        category: categoryId 
+      },
+      props: { category: cat },
+      locale: locale
+    };
+  });
+}
+
+const { category } = Astro.props;
+const locale = Astro.currentLocale || defaultLocale;
+const t = useTranslations(locale as any);
+const { Content } = await render(category);
+const currentCategoryId = category.id.endsWith(locale) && locale !== 'en' ? category.id.slice(0, -locale.length) : category.id;
+const l = (path: string) => locale === defaultLocale ? path : `/${locale}${path}`;
+
+const allCategories = await getCollection('categories', (entry) => entry.data.locale === locale);
+const sortedCategories = allCategories.sort((a, b) => a.data.rank - b.data.rank);
+
+const allUseCases = await getCollection('usecases', (entry) => entry.data.locale === locale);
+const categoryUseCases = allUseCases
+  .filter(uc => uc.data.category === currentCategoryId)
+  .sort((a, b) => a.data.rank - b.data.rank);
+---
+<Site title={category.data.title} description={category.data.description}>
+  <Hero
+    title={category.data.title}
+    subtitle={category.data.tagline}
+    usecase={currentCategoryId}
+    locale={locale}
+  />
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex flex-col md:flex-row gap-12">
+    <aside class="w-full md:w-64 shrink-0">
+      <CategoryNav categories={sortedCategories} currentCategory={currentCategoryId} />
+    </aside>
+
+    <div class="flex-grow">
+      <div class="article-body max-w-none mb-16">
+        <Content />
+      </div>
+
+      <h2 class="text-3xl font-bold text-slate-900 mb-8">{locale === 'de' ? 'Anwendungsfälle' : 'Use Cases'} in {category.data.title}</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        {categoryUseCases.map(uc => {
+          const usecaseId = uc.id.endsWith(locale) && locale !== 'en' ? uc.id.slice(0, -locale.length) : uc.id;
+          return (
+            <UseCaseCard 
+              href={l(`/${currentCategoryId}/${usecaseId}`)}
+              title={uc.data.title}
+              description={uc.data.painPoint.substring(0, 150) + '...'}
+            />
+          );
+        })}
+      </div>
+
+      <div class="mt-24 bg-slate-50 rounded-3xl p-8 md:p-12 border border-slate-100">
+        <h2 class="text-3xl font-bold text-slate-900 mb-4 text-center">{t('index.pricing.title')}</h2>
+        <p class="text-center text-slate-600 mb-12 max-w-2xl mx-auto">{t('index.pricing.subtitle')}</p>
+        <PriceTable />
+      </div>
+
+      <div id="waitlist" class="mt-24 bg-slate-900 rounded-3xl p-8 md:p-16 text-center text-white overflow-hidden relative">
+        <div class="relative z-10">
+          <h2 class="text-3xl md:text-4xl font-bold mb-6">{locale === 'de' ? 'Bereit für den nächsten Schritt?' : 'Ready for the Next Step?'}</h2>
+          <p class="text-xl text-slate-400 mb-10 max-w-2xl mx-auto">
+            {locale === 'de' ? 'Werden Sie Teil der WifiSenseBox-Revolution. Melden Sie sich für die Warteliste an.' : 'Join the WifiSenseBox revolution. Sign up for the waitlist today.'}
+          </p>
+          <div class="flex justify-center">
+            <WaitlistForm usecase={currentCategoryId} locale={locale} variant="dark" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</Site>

@@ -1,0 +1,133 @@
+---
+import WaitlistForm from './WaitlistForm.astro';
+
+import { useTranslations } from '../i18n/t';
+
+interface Props {
+  title: string;
+  subtitle: string;
+  usecase?: string;
+  locale?: string;
+  ctaText?: string;
+  eyebrow?: string;
+  targetBuyer?: string;
+  bullets?: string[];
+  stats?: { value: string; label: string }[];
+}
+
+const {
+  title,
+  subtitle,
+  usecase,
+  locale,
+  ctaText,
+  eyebrow,
+  targetBuyer,
+  bullets = [],
+  stats,
+} = Astro.props;
+
+const defaultStats = (locale === 'de')
+  ? [
+      { value: '15-30%', label: 'Einsparungen' },
+      { value: '99.9%', label: 'Genauigkeit' },
+      { value: '0', label: 'Kameras' },
+    ]
+  : [
+      { value: '15-30%', label: 'Bill savings' },
+      { value: '99.9%', label: 'Accuracy' },
+      { value: '0', label: 'Cameras' },
+    ];
+const heroStats = (stats && stats.length > 0) ? stats : defaultStats;
+
+const t = useTranslations(locale as any);
+
+const defaultBullets = (locale === 'de')
+  ? ['Ersetzt Kameras ohne DSGVO-Probleme', 'Keine zusätzliche Hardware nötig', 'Extrem günstiger Standalone-Sensor']
+  : ['Replaces cameras without GDPR issues', 'No additional hardware needed', 'Extremely affordable standalone sensor'];
+
+const heroBullets = bullets.length > 0 ? bullets : defaultBullets;
+const eyebrowText = eyebrow || (locale === 'de' ? 'Founders Edition · Früher Zugang' : 'Founders Edition · Early Access');
+---
+<section class="relative overflow-hidden bg-gradient-to-b from-slate-50 via-white to-white">
+  <div aria-hidden="true" class="absolute inset-0 -z-10">
+    <div class="absolute -top-32 -right-32 h-96 w-96 rounded-full bg-blue-200/40 blur-3xl"></div>
+    <div class="absolute top-40 -left-32 h-80 w-80 rounded-full bg-cyan-200/30 blur-3xl"></div>
+  </div>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-16 sm:pt-16 sm:pb-20">
+    <div class="grid lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+      <div class="lg:col-span-7">
+        <div class="flex items-center gap-4 mb-6">
+          <span class="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-blue-700 ring-1 ring-blue-100">
+            <span class="h-1.5 w-1.5 rounded-full bg-blue-600 animate-pulse"></span>
+            {eyebrowText}
+          </span>
+          <span class="text-[10px] font-bold uppercase tracking-widest text-rose-600 animate-bounce">
+            {t('hero.urgency')}
+          </span>
+        </div>
+
+        <h1 class="mt-5 text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 leading-[1.05]">
+          {title}
+        </h1>
+        <p class="mt-5 text-lg sm:text-xl text-slate-600 max-w-xl leading-relaxed">
+          {subtitle}
+        </p>
+
+        <div class="mt-8">
+          <WaitlistForm usecase={usecase} locale={locale} ctaText={ctaText} />
+        </div>
+
+        <div class="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-slate-500">
+          <div class="flex items-center gap-2">
+            <svg class="h-4 w-4 text-emerald-500" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 1 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg>
+            <span>{locale === 'de' ? 'DSGVO-konform' : 'GDPR compliant'}</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <svg class="h-4 w-4 text-emerald-500" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 1 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg>
+            <span>{locale === 'de' ? 'Keine Kameras' : 'No cameras'}</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="lg:col-span-5">
+        <div class="relative rounded-2xl bg-white/80 backdrop-blur ring-1 ring-slate-200 shadow-xl shadow-blue-900/5 p-6 sm:p-8 overflow-hidden">
+          <div class="mb-6 -mx-6 sm:-mx-8 -mt-6 sm:-mt-8">
+            <img 
+              src="/productimage.jpg" 
+              alt="WifiSenseBox Device" 
+              class="w-full h-48 object-cover object-center border-b border-slate-100"
+            />
+          </div>
+          {targetBuyer && (
+            <div class="mb-5 pb-5 border-b border-slate-100">
+              <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">{locale === 'de' ? 'Ideal für' : 'Ideal for'}</p>
+              <p class="mt-1 text-lg font-semibold text-slate-900">{targetBuyer}</p>
+            </div>
+          )}
+          <p class="text-xs font-semibold uppercase tracking-wider text-slate-500">{locale === 'de' ? 'Warum WifiSenseBox' : 'Why WifiSenseBox'}</p>
+          <ul class="mt-3 space-y-3">
+            {heroBullets.map(b => (
+              <li class="flex items-start gap-3">
+                <span class="mt-0.5 inline-flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-blue-600 text-white">
+                  <svg class="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 1 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg>
+                </span>
+                <span class="text-slate-700">{b}</span>
+              </li>
+            ))}
+          </ul>
+
+          <div class:list={["mt-6 pt-6 border-t border-slate-100 grid gap-4 text-center", heroStats.length === 2 ? 'grid-cols-2' : heroStats.length === 4 ? 'grid-cols-4' : 'grid-cols-3']}>
+            {heroStats.map(s => (
+              <div>
+                <div class="text-2xl font-bold text-slate-900 leading-tight">{s.value}</div>
+                <div class="text-xs text-slate-500 mt-1">{s.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

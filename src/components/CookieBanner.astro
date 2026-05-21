@@ -1,0 +1,71 @@
+---
+import { useTranslations, defaultLocale } from '../i18n/t';
+import type { Locale } from '../i18n/t';
+
+const locale = (Astro.currentLocale || defaultLocale) as Locale;
+const t = useTranslations(locale);
+const l = (path: string) => locale === defaultLocale ? path : `/${locale}${path}`;
+---
+<div id="cookie-banner" class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 p-6 shadow-2xl transform translate-y-full transition-transform duration-500 z-[100] hidden">
+    <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+        <div class="text-sm text-slate-600 leading-relaxed max-w-3xl">
+            {t('cookie.message')} 
+            <a href={l('/datenschutz')} class="text-blue-600 font-semibold hover:underline underline-offset-4 decoration-blue-500/30">{t('cookie.privacyPolicy')}</a>.
+        </div>
+        <div class="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+            <button id="decline-cookies" class="flex-1 sm:flex-none whitespace-nowrap inline-flex items-center justify-center px-6 py-2.5 border border-slate-300 text-sm font-bold rounded-xl text-slate-700 bg-white hover:bg-slate-50 hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 transition-all cursor-pointer">
+                {t('cookie.decline')}
+            </button>
+            <button id="accept-cookies" class="flex-1 sm:flex-none whitespace-nowrap inline-flex items-center justify-center px-6 py-2.5 border border-transparent text-sm font-bold rounded-xl shadow-lg shadow-blue-600/20 text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all cursor-pointer">
+                {t('cookie.accept')}
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function initCookieBanner() {
+        const banner = document.getElementById('cookie-banner');
+        const acceptBtn = document.getElementById('accept-cookies');
+        const declineBtn = document.getElementById('decline-cookies');
+
+        if (!banner || !acceptBtn || !declineBtn) return;
+
+        // Check if user has already made a choice
+        const consent = localStorage.getItem('cookie-consent');
+        if (consent === null) {
+            banner.classList.remove('hidden');
+            // Small delay to trigger animation
+            requestAnimationFrame(() => {
+                setTimeout(() => {
+                    banner.classList.remove('translate-y-full');
+                }, 10);
+            });
+        }
+
+        const closeBanner = () => {
+            banner.classList.add('translate-y-full');
+            setTimeout(() => {
+                banner.classList.add('hidden');
+            }, 500);
+        };
+
+        acceptBtn.addEventListener('click', () => {
+            localStorage.setItem('cookie-consent', 'true');
+            // Here you would typically initialize analytics
+            window.dispatchEvent(new CustomEvent('cookie-consent-updated', { detail: { accepted: true } }));
+            closeBanner();
+        });
+
+        declineBtn.addEventListener('click', () => {
+            localStorage.setItem('cookie-consent', 'false');
+            window.dispatchEvent(new CustomEvent('cookie-consent-updated', { detail: { accepted: false } }));
+            closeBanner();
+        });
+    }
+
+    // Run on initial load
+    initCookieBanner();
+    // Run on view transitions if enabled
+    document.addEventListener('astro:after-swap', initCookieBanner);
+</script>

@@ -1,0 +1,88 @@
+---
+import Site from '../../layouts/Site.astro';
+import ROICalculator from '../../components/ROICalculator';
+import WaitlistForm from '../../components/WaitlistForm.astro';
+import { defaultLocale, useTranslations } from '../../i18n/t';
+
+export function getStaticPaths() {
+  return [
+    { params: { locale: undefined }, locale: 'en' },
+    { params: { locale: 'de' }, locale: 'de' },
+  ];
+}
+
+const locale = (Astro.currentLocale || defaultLocale) as 'en' | 'de';
+const t = useTranslations(locale);
+const isDe = locale === 'de';
+
+const title = isDe ? 'ROI-Rechner | WifiSenseBox' : 'ROI Calculator | WifiSenseBox';
+const description = isDe
+  ? 'Berechnen Sie in 30 Sekunden, wie viel WifiSenseBox Ihrem Betrieb pro Jahr sparen kann — über alle Anwendungsfälle hinweg.'
+  : 'Calculate in 30 seconds how much WifiSenseBox can save your operation per year — across every use case.';
+
+const initial = (Astro.url.searchParams.get('uc') || '') as string;
+---
+<Site title={title} description={description}>
+  <section class="relative overflow-hidden bg-gradient-to-b from-slate-50 to-white">
+    <div class="absolute inset-x-0 top-0 h-64 bg-gradient-to-b from-blue-50/60 to-transparent pointer-events-none"></div>
+    <div class="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-10 text-center">
+      <span class="inline-block text-xs font-bold uppercase tracking-widest text-blue-600 mb-3">
+        {isDe ? 'Interaktiver Rechner' : 'Interactive Calculator'}
+      </span>
+      <h1 class="text-4xl sm:text-5xl font-extrabold text-slate-900 leading-tight mb-4">
+        {isDe ? 'Wie viel kostet Sie das' : 'How much is the'}<br />
+        <span class="bg-gradient-to-r from-blue-600 to-blue-500 bg-clip-text text-transparent">
+          {isDe ? 'aktuelle System wirklich?' : 'status quo costing you?'}
+        </span>
+      </h1>
+      <p class="text-lg text-slate-600 max-w-2xl mx-auto">
+        {isDe
+          ? 'Wählen Sie Ihren Anwendungsfall, passen Sie 2–3 Zahlen an und sehen Sie sofort, was WifiSenseBox Ihnen sparen würde.'
+          : 'Pick your use case, drag 2–3 sliders, and see exactly what WifiSenseBox would save you — in dollars, payback months, and 5-year net.'}
+      </p>
+    </div>
+  </section>
+
+  <section class="pb-20 -mt-2">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <ROICalculator client:load initialUseCase={initial || undefined} locale={locale} />
+
+      <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+        <div class="p-4 rounded-xl bg-blue-50/70 border border-blue-100">
+          <div class="font-bold text-slate-900 mb-1">{isDe ? 'Konservative Annahmen' : 'Conservative assumptions'}</div>
+          <p class="text-slate-600">{isDe
+            ? 'Wir nehmen branchenübliche Mittelwerte — kein Marketing-Aufschlag.'
+            : 'Industry-median recovery rates. No hand-waved 10× marketing math.'}</p>
+        </div>
+        <div class="p-4 rounded-xl bg-blue-50/70 border border-blue-100">
+          <div class="font-bold text-slate-900 mb-1">{isDe ? 'Hardware zum Selbstkostenpreis' : 'Hardware at cost'}</div>
+          <p class="text-slate-600">{isDe
+            ? '49 $ einmalig pro Sensor. Keine Hubs, keine NVRs, keine versteckten Gebühren.'
+            : '$49 one-time per sensor. No hubs, no NVRs, no hidden fees.'}</p>
+        </div>
+        <div class="p-4 rounded-xl bg-blue-50/70 border border-blue-100">
+          <div class="font-bold text-slate-900 mb-1">{isDe ? '100% DSGVO-konform' : '100% GDPR-compliant'}</div>
+          <p class="text-slate-600">{isDe
+            ? 'Keine Kameras, keine Bilder, keine personenbezogenen Daten.'
+            : 'No cameras, no images, no personal data ever leaves the device.'}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="waitlist" class="py-20 bg-slate-900 text-white">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <h2 class="text-3xl sm:text-4xl font-extrabold mb-4">
+        {isDe ? 'Sichern Sie sich Ihren Pilot-Slot' : 'Lock in your pilot slot'}
+      </h2>
+      <p class="text-lg text-slate-300 mb-8">
+        {isDe
+          ? 'Founders Edition: $49 Sensor + 3 Monate Software gratis für die ersten 1.000 Anmeldungen.'
+          : "Founders Edition: $49 sensor + 3 months of software free for the first 1,000 sign-ups."}
+      </p>
+      <div class="flex justify-center">
+        <WaitlistForm locale={locale} variant="dark" usecase="roi-calculator" />
+      </div>
+    </div>
+  </section>
+</Site>

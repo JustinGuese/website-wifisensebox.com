@@ -1,0 +1,171 @@
+---
+import Site from '../../../layouts/Site.astro';
+import Hero from '../../../components/Hero.astro';
+import FeatureGrid from '../../../components/FeatureGrid.astro';
+import FaqAccordion from '../../../components/FaqAccordion.astro';
+import UseCaseCard from '../../../components/UseCaseCard.astro';
+import PriceTable from '../../../components/PriceTable.astro';
+import WaitlistForm from '../../../components/WaitlistForm.astro';
+import SensingDemo from '../../../components/SensingDemo';
+import { getCollection, render } from 'astro:content';
+import { defaultLocale, useTranslations } from '../../../i18n/t';
+
+export async function getStaticPaths() {
+  const usecases = await getCollection('usecases');
+  return usecases.map(uc => {
+    const locale = uc.data.locale;
+    const usecaseId = uc.id.endsWith(locale) && locale !== 'en' ? uc.id.slice(0, -locale.length) : uc.id;
+    return {
+      params: { 
+        locale: locale === 'en' ? undefined : 'de', 
+        category: uc.data.category, 
+        usecase: usecaseId 
+      },
+      props: { usecase: uc },
+      locale: locale
+    };
+  });
+}
+
+const { usecase } = Astro.props;
+const locale = Astro.currentLocale || defaultLocale;
+const t = useTranslations(locale as any);
+const { Content } = await render(usecase);
+const currentUsecaseId = usecase.id.endsWith(locale) && locale !== 'en' ? usecase.id.slice(0, -locale.length) : usecase.id;
+
+const l = (path: string) => locale === defaultLocale ? path : `/${locale}${path}`;
+
+const allUseCases = await getCollection('usecases', (entry) => entry.data.locale === locale);
+const siblingUseCases = allUseCases
+  .filter(uc => uc.data.category === usecase.data.category && uc.id !== usecase.id)
+  .sort((a, b) => a.data.rank - b.data.rank);
+---
+<Site title={`${usecase.data.title} | WifiSenseBox`} description={usecase.data.heroSubtitle}>
+  <script type="application/ld+json" slot="head" is:inline set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": `WifiSenseBox ${usecase.data.title}`,
+    "description": usecase.data.heroSubtitle,
+    "brand": {
+      "@type": "Brand",
+      "name": "WifiSenseBox"
+    },
+    "offers": {
+      "@type": "AggregateOffer",
+      "priceCurrency": "USD",
+      "lowPrice": "9",
+      "offerCount": "3"
+    }
+  })} />
+  {usecase.data.faq && usecase.data.faq.length > 0 && (
+    <script type="application/ld+json" slot="head" is:inline set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": usecase.data.faq.map(item => ({
+        "@type": "Question",
+        "name": item.q,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": item.a
+        }
+      }))
+    })} />
+  )}
+  <Hero
+    title={usecase.data.heroTitle}
+    subtitle={usecase.data.heroSubtitle}
+    usecase={currentUsecaseId}
+    ctaText={usecase.data.ctaText}
+    targetBuyer={usecase.data.targetBuyer}
+    bullets={usecase.data.heroBullets}
+    stats={usecase.data.heroStats}
+    locale={locale}
+  />
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="rounded-2xl border border-rose-100 bg-rose-50/50 p-6 sm:p-8">
+        <div class="flex items-center gap-2 mb-3">
+          <span class="inline-flex h-7 w-7 items-center justify-center rounded-full bg-rose-100 text-rose-600">
+            <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495ZM10 5a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0v-3.5A.75.75 0 0 1 10 5Zm0 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd"/></svg>
+          </span>
+          <span class="text-xs font-semibold uppercase tracking-wider text-rose-600">{locale === 'de' ? 'Das Problem' : 'The Problem'}</span>
+        </div>
+        <p class="text-lg text-slate-700 leading-relaxed">{usecase.data.painPoint}</p>
+      </div>
+      <div class="rounded-2xl border border-blue-100 bg-blue-50/50 p-6 sm:p-8">
+        <div class="flex items-center gap-2 mb-3">
+          <span class="inline-flex h-7 w-7 items-center justify-center rounded-full bg-blue-600 text-white">
+            <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 1 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg>
+          </span>
+          <span class="text-xs font-semibold uppercase tracking-wider text-blue-700">{locale === 'de' ? 'Die WifiSenseBox Lösung' : 'The WifiSenseBox Solution'}</span>
+        </div>
+        <p class="text-lg text-slate-700 leading-relaxed">{usecase.data.solution}</p>
+      </div>
+    </div>
+
+    <div class="mt-16">
+      <div class="text-center mb-8">
+        <span class="inline-block text-xs font-semibold uppercase tracking-wider text-blue-600 mb-2">{locale === 'de' ? 'Live-Demo' : 'Live Demo'}</span>
+        <h2 class="text-2xl sm:text-3xl font-bold text-slate-900">{locale === 'de' ? 'So sieht WifiSenseBox Ihre Umgebung' : 'How WifiSenseBox sees your space'}</h2>
+      </div>
+      <SensingDemo client:visible config={usecase.data.demoConfig} locale={locale as any} />
+    </div>
+
+    <div class="mt-16 max-w-5xl mx-auto">
+      <article class="article-body">
+        <Content />
+      </article>
+    </div>
+
+    <div class="mt-20">
+      <h2 class="text-3xl font-bold text-slate-900 mb-8 text-center">{locale === 'de' ? 'Kernfunktionen' : 'Key Features'}</h2>
+      <FeatureGrid features={usecase.data.features} />
+    </div>
+
+    <div class="mt-20 bg-slate-50 rounded-3xl p-8 md:p-12 border border-slate-100">
+      <h2 class="text-3xl font-bold text-slate-900 mb-4 text-center">{t('index.pricing.title')}</h2>
+      <p class="text-center text-slate-600 mb-12 max-w-2xl mx-auto">{t('index.pricing.subtitle')}</p>
+      <PriceTable />
+    </div>
+
+    {usecase.data.faq && usecase.data.faq.length > 0 && (
+      <div class="max-w-3xl mx-auto mt-20">
+        <FaqAccordion faq={usecase.data.faq} />
+      </div>
+    )}
+
+    <div id="waitlist" class="mt-20 bg-blue-600 rounded-3xl p-8 md:p-16 text-center text-white overflow-hidden relative">
+      <div class="relative z-10">
+        <h2 class="text-3xl md:text-4xl font-bold mb-6">{locale === 'de' ? 'Bereit für die Zukunft der Sensorik?' : 'Ready for the Future of Sensing?'}</h2>
+        <p class="text-xl text-blue-100 mb-10 max-w-2xl mx-auto">
+          {locale === 'de' ? 'Sichern Sie sich Ihren Platz auf der Warteliste und erhalten Sie exklusiven Zugang zur Founders Edition.' : 'Secure your spot on the waitlist and get exclusive early access to the Founders Edition.'}
+        </p>
+        <div class="flex justify-center">
+          <WaitlistForm usecase={currentUsecaseId} locale={locale} ctaText={usecase.data.ctaText} variant="dark" />
+        </div>
+      </div>
+      {/* Decorative background element */}
+      <div class="absolute top-0 right-0 -translate-y-1/2 translate-x-1/4 w-96 h-96 bg-blue-500 rounded-full blur-3xl opacity-50"></div>
+      <div class="absolute bottom-0 left-0 translate-y-1/2 -translate-x-1/4 w-96 h-96 bg-blue-700 rounded-full blur-3xl opacity-50"></div>
+    </div>
+
+    {siblingUseCases.length > 0 && (
+      <div class="mt-20 border-t border-slate-200 pt-12">
+        <h3 class="text-2xl font-bold text-slate-900 mb-6">{locale === 'de' ? 'Weitere Anwendungsfälle in dieser Kategorie' : `Other Use Cases in ${usecase.data.category}`}</h3>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {siblingUseCases.map(uc => {
+            const ucId = uc.id.endsWith(locale) && locale !== 'en' ? uc.id.slice(0, -locale.length) : uc.id;
+            return (
+              <UseCaseCard 
+                href={l(`/${uc.data.category}/${ucId}`)}
+                title={uc.data.title}
+                description={uc.data.heroSubtitle}
+              />
+            );
+          })}
+        </div>
+      </div>
+    )}
+  </div>
+</Site>

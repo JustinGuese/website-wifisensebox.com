@@ -1,0 +1,27 @@
+---
+import { getLocaleFromUrl, defaultLocale } from '../i18n/t';
+
+interface Props {
+  categories: any[];
+  currentCategory: string;
+}
+
+const { categories, currentCategory } = Astro.props;
+const locale = getLocaleFromUrl(Astro.url);
+const l = (path: string) => locale === defaultLocale ? path : `/${locale}${path}`;
+---
+<nav class="space-y-2">
+  <h4 class="text-sm font-semibold text-slate-900 uppercase tracking-wider mb-4">Categories</h4>
+  {categories.map((cat) => {
+    const catId = cat.id.endsWith(cat.data.locale) && cat.data.locale !== 'en' ? cat.id.slice(0, -cat.data.locale.length) : cat.id;
+    const isActive = catId === currentCategory;
+    return (
+      <a 
+        href={l(`/${catId}`)} 
+        class={`block px-3 py-2 rounded-md text-sm font-medium ${isActive ? 'bg-blue-50 text-blue-700' : 'text-slate-700 hover:bg-slate-50'}`}
+      >
+        {cat.data.title}
+      </a>
+    );
+  })}
+</nav>

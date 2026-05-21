@@ -1,0 +1,293 @@
+---
+import Site from '../../layouts/Site.astro';
+import Hero from '../../components/Hero.astro';
+import UseCaseCard from '../../components/UseCaseCard.astro';
+import SensingDemo from '../../components/SensingDemo';
+import PriceTable from '../../components/PriceTable.astro';
+import { getCollection } from 'astro:content';
+import { defaultLocale, useTranslations } from '../../i18n/t';
+
+export function getStaticPaths() {
+  return [
+    { params: { locale: undefined }, locale: 'en' },
+    { params: { locale: 'de' }, locale: 'de' },
+  ];
+}
+
+const locale = Astro.currentLocale || defaultLocale;
+const t = useTranslations(locale as any);
+const l = (path: string) => locale === defaultLocale ? path : `/${locale}${path}`;
+
+const allCategories = await getCollection('categories', (entry) => entry.data.locale === locale);
+const sortedCategories = allCategories.sort((a, b) => a.data.rank - b.data.rank);
+const allUseCases = await getCollection('usecases', (entry) => entry.data.locale === locale);
+
+const featuredUsecases = sortedCategories
+  .map(cat => {
+    const catId = cat.id.endsWith(locale) && locale !== 'en' ? cat.id.slice(0, -locale.length) : cat.id;
+    const top = allUseCases
+      .filter(uc => uc.data.category === catId && uc.data.rank === 1 && uc.data.demoConfig)
+      .sort((a, b) => a.data.rank - b.data.rank)[0];
+    if (!top) return null;
+    const ucId = top.id.endsWith(locale) && locale !== 'en' ? top.id.slice(0, -locale.length) : top.id;
+    return { cat, catId, uc: top, ucId };
+  })
+  .filter(Boolean) as { cat: any; catId: string; uc: any; ucId: string }[];
+---
+<Site>
+  <script type="application/ld+json" slot="head" is:inline set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "name": "WifiSenseBox",
+    "url": "https://wifisensebox.ai",
+    "logo": "https://wifisensebox.ai/logo.svg",
+    "description": "Privacy-first ambient sensing replaces invasive cameras with GDPR-compliant WiFi sensing."
+  })} />
+  <script type="application/ld+json" slot="head" is:inline set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Product",
+    "name": "WifiSenseBox Ambient Sensor",
+    "description": "Affordable standalone hardware for presence, fall, and vitals detection without cameras.",
+    "brand": {
+      "@type": "Brand",
+      "name": "WifiSenseBox"
+    }
+  })} />
+  <Hero 
+    title={t('hero.title')} 
+    subtitle={t('hero.subtitle')} 
+    usecase="general"
+    locale={locale}
+  />
+
+  <section class="py-20 bg-slate-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-3xl mx-auto mb-16">
+        <span class="inline-block text-xs font-semibold uppercase tracking-wider text-blue-600 mb-3">{locale === 'de' ? 'Live-Demos' : 'Live Demos'}</span>
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 mb-4">{t('index.demo.title')}</h2>
+        <p class="text-lg text-slate-600">{t('index.demo.description')}</p>
+      </div>
+
+      <div class="space-y-24">
+        {featuredUsecases.map((f, i) => (
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+            <div class:list={[i % 2 === 1 ? 'lg:order-2' : '']}>
+              <span class="inline-block text-[11px] font-bold uppercase tracking-widest text-blue-600 mb-3">{f.cat.data.title}</span>
+              <h3 class="text-2xl sm:text-3xl font-bold text-slate-900 mb-4 leading-tight">{f.uc.data.heroTitle}</h3>
+              <p class="text-lg text-slate-600 mb-6 leading-relaxed">{f.uc.data.heroSubtitle}</p>
+              {f.uc.data.heroBullets && (
+                <ul class="space-y-3 mb-8">
+                  {f.uc.data.heroBullets.map((b: string) => (
+                    <li class="flex items-start gap-3">
+                      <span class="mt-1 inline-flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-blue-100 text-blue-600">
+                        <svg class="h-3 w-3" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 1 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg>
+                      </span>
+                      <span class="text-slate-700">{b}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              <a href={l(`/${f.catId}/${f.ucId}`)} class="inline-flex items-center gap-2 text-sm font-bold text-blue-600 hover:text-blue-700 group">
+                {locale === 'de' ? 'Mehr erfahren' : 'Learn more'}
+                <svg class="h-4 w-4 transition-transform group-hover:translate-x-0.5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 10a.75.75 0 0 1 .75-.75h10.638L10.23 5.29a.75.75 0 1 1 1.04-1.08l5.5 5.25a.75.75 0 0 1 0 1.08l-5.5 5.25a.75.75 0 1 1-1.04-1.08l4.158-3.96H3.75A.75.75 0 0 1 3 10Z" clip-rule="evenodd"/></svg>
+              </a>
+            </div>
+            <div class:list={["relative", i % 2 === 1 ? 'lg:order-1' : '']}>
+              <SensingDemo client:visible config={f.uc.data.demoConfig} locale={locale as any} />
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="py-14 bg-gradient-to-br from-blue-600 to-blue-700 text-white">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center gap-8">
+      <div class="flex-1 text-center md:text-left">
+        <span class="inline-block text-xs font-bold uppercase tracking-widest text-blue-200 mb-2">
+          {locale === 'de' ? 'Interaktiver Rechner' : 'Interactive Calculator'}
+        </span>
+        <h2 class="text-2xl sm:text-3xl font-extrabold leading-tight mb-2">
+          {locale === 'de' ? 'Sehen Sie in 30 Sekunden, wie viel Sie sparen.' : 'See exactly what WifiSenseBox saves you — in 30 seconds.'}
+        </h2>
+        <p class="text-blue-100 max-w-xl">
+          {locale === 'de'
+            ? 'Wählen Sie Ihren Anwendungsfall, ziehen Sie ein paar Schieberegler und erhalten Sie Ihren Payback in Monaten.'
+            : 'Pick your use case, drag a few sliders, get your payback in months and 5-year net savings.'}
+        </p>
+      </div>
+      <a href={l('/roi-calculator')} class="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-white text-blue-700 font-bold shadow-lg hover:bg-blue-50 transition-colors whitespace-nowrap">
+        {locale === 'de' ? 'ROI berechnen' : 'Calculate my ROI'}
+        <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 10a.75.75 0 0 1 .75-.75h10.638L10.23 5.29a.75.75 0 1 1 1.04-1.08l5.5 5.25a.75.75 0 0 1 0 1.08l-5.5 5.25a.75.75 0 1 1-1.04-1.08l4.158-3.96H3.75A.75.75 0 0 1 3 10Z" clip-rule="evenodd"/></svg>
+      </a>
+    </div>
+  </section>
+
+  <section class="py-24 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 mb-4">
+          {locale === 'de' ? 'WLAN als Sensor: Die Magie dahinter' : 'WiFi as a Sensor: The Magic Behind It'}
+        </h2>
+        <p class="text-xl text-slate-600 max-w-3xl mx-auto">
+          {locale === 'de' 
+            ? 'Entdecken Sie, wie WifiSenseBox gewöhnliche Funkwellen in hochpräzise Umgebungsdaten verwandelt – ganz ohne Kameras.' 
+            : 'Discover how WifiSenseBox transforms ordinary radio waves into high-precision environmental data — with zero cameras.'}
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+        <div class="relative rounded-3xl overflow-hidden aspect-video shadow-2xl ring-1 ring-slate-200">
+          <div class="absolute inset-0 bg-slate-900 flex items-center justify-center">
+            {/* Visual representation of waves */}
+            <div class="flex items-center gap-2">
+              <div class="w-1.5 h-12 bg-blue-500 rounded-full animate-[pulse_1s_infinite]"></div>
+              <div class="w-1.5 h-20 bg-blue-500 rounded-full animate-[pulse_1.2s_infinite]"></div>
+              <div class="w-1.5 h-24 bg-blue-400 rounded-full animate-[pulse_1.5s_infinite]"></div>
+              <div class="w-1.5 h-32 bg-blue-600 rounded-full animate-[pulse_1.1s_infinite]"></div>
+              <div class="w-1.5 h-24 bg-blue-400 rounded-full animate-[pulse_1.5s_infinite]"></div>
+              <div class="w-1.5 h-20 bg-blue-500 rounded-full animate-[pulse_1.2s_infinite]"></div>
+              <div class="w-1.5 h-12 bg-blue-500 rounded-full animate-[pulse_1s_infinite]"></div>
+            </div>
+            <div class="absolute bottom-6 left-6 text-white/50 text-[10px] font-mono uppercase tracking-widest">
+              Live Signal Modulation (CSI)
+            </div>
+          </div>
+        </div>
+        <div>
+          <ul class="space-y-8">
+            <li class="flex gap-6">
+              <div class="h-12 w-12 shrink-0 rounded-2xl bg-blue-600 text-white flex items-center justify-center shadow-lg shadow-blue-600/20">
+                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.111 16.404a5.5 5.5 0 017.778 0M12 20h.01m-7.08-7.071a9.05 9.05 0 0112.14 0m-15.38-7.07a13.5 13.5 0 0118.64 0" /></svg>
+              </div>
+              <div>
+                <h4 class="text-xl font-bold text-slate-900 mb-2">{locale === 'de' ? 'Dringt durch Wände' : 'Penetrates Walls'}</h4>
+                <p class="text-slate-600 leading-relaxed">{locale === 'de' ? 'WLAN-Wellen durchdringen Beton und Möbel, sodass ein einziger Sensor eine ganze Wohnung abdecken kann.' : 'WiFi waves pass through concrete and furniture, allowing a single sensor to cover an entire apartment.'}</p>
+              </div>
+            </li>
+            <li class="flex gap-6">
+              <div class="h-12 w-12 shrink-0 rounded-2xl bg-blue-600 text-white flex items-center justify-center shadow-lg shadow-blue-600/20">
+                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>
+              </div>
+              <div>
+                <h4 class="text-xl font-bold text-slate-900 mb-2">{locale === 'de' ? 'Absolute Privatsphäre' : 'Absolute Privacy'}</h4>
+                <p class="text-slate-600 leading-relaxed">{locale === 'de' ? 'Es werden keine Bilder erfasst. Das System erkennt nur physikalische Störungen, keine persönlichen Merkmale.' : 'No images are ever captured. The system only detects physical disruptions, not personal features.'}</p>
+              </div>
+            </li>
+          </ul>
+          <div class="mt-10">
+            <a href={l('/how-it-works')} class="inline-flex items-center gap-2 text-blue-600 font-bold hover:text-blue-700 group transition-colors text-lg">
+              {locale === 'de' ? 'Tiefer in die Technologie eintauchen' : 'Deep dive into the technology'}
+              <svg class="h-5 w-5 transform group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="text-3xl font-bold text-center text-slate-900 mb-12">{t('index.how.title')}</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+        <div>
+          <div class="relative mx-auto h-24 w-24 mb-6">
+            <div class="absolute -top-2 -right-2 flex items-center justify-center h-8 w-8 rounded-full bg-blue-600 text-white text-sm font-bold z-10 shadow-lg">1</div>
+            <img src="/productimage.jpg" alt="Plug in WifiSenseBox" class="h-full w-full object-cover rounded-xl shadow-md border border-slate-100" />
+          </div>
+          <h3 class="text-lg font-medium text-slate-900">{t('index.how.step1.title')}</h3>
+          <p class="mt-2 text-slate-500">{t('index.how.step1.desc')}</p>
+        </div>
+        <div>
+          <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-blue-100 text-blue-600 mb-4 text-xl font-bold">2</div>
+          <h3 class="text-lg font-medium text-slate-900">{t('index.how.step2.title')}</h3>
+          <p class="mt-2 text-slate-500">{t('index.how.step2.desc')}</p>
+        </div>
+        <div>
+          <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-blue-100 text-blue-600 mb-4 text-xl font-bold">3</div>
+          <h3 class="text-lg font-medium text-slate-900">{t('index.how.step3.title')}</h3>
+          <p class="mt-2 text-slate-500">{t('index.how.step3.desc')}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-16 bg-slate-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h2 class="text-3xl font-bold text-center text-slate-900 mb-4">{t('index.pricing.title')}</h2>
+      <p class="text-center text-slate-600 mb-12">{t('index.pricing.subtitle')}</p>
+      <PriceTable />
+    </div>
+  </section>
+
+  <section class="py-24 bg-white border-t border-slate-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 mb-4">{t('index.usecases.title')}</h2>
+        <p class="text-xl text-slate-600 max-w-3xl mx-auto">{t('index.usecases.subtitle')}</p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 lg:gap-16">
+        {sortedCategories.map(cat => {
+          const catId = cat.id.endsWith(locale) && locale !== 'en' ? cat.id.slice(0, -locale.length) : cat.id;
+          const ucs = allUseCases
+            .filter(uc => uc.data.category === catId)
+            .sort((a, b) => a.data.rank - b.data.rank);
+          
+          return (
+            <div class="flex flex-col">
+              <div class="flex items-center gap-3 mb-6">
+                <div class="h-10 w-10 rounded-xl bg-blue-600 text-white flex items-center justify-center shadow-lg shadow-blue-600/20">
+                  <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                </div>
+                <h3 class="text-xl font-bold text-slate-900 uppercase tracking-tight">{cat.data.title}</h3>
+              </div>
+              
+              <ul class="space-y-4">
+                {ucs.map(uc => {
+                  const ucId = uc.id.endsWith(locale) && locale !== 'en' ? uc.id.slice(0, -locale.length) : uc.id;
+                  return (
+                    <li>
+                      <a href={l(`/${catId}/${ucId}`)} class="group block p-4 rounded-2xl border border-transparent hover:border-blue-100 hover:bg-blue-50/50 transition-all">
+                        <div class="flex items-center justify-between mb-1">
+                          <span class="font-bold text-slate-900 group-hover:text-blue-600 transition-colors">{uc.data.title}</span>
+                          <svg class="h-4 w-4 text-slate-300 group-hover:text-blue-500 transition-colors transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                          </svg>
+                        </div>
+                        <p class="text-sm text-slate-500 line-clamp-2">{uc.data.painPoint || uc.data.solution || uc.data.heroSubtitle}</p>
+                      </a>
+                    </li>
+                  );
+                })}
+              </ul>
+              
+              <a href={l(`/${catId}`)} class="mt-6 inline-flex items-center text-sm font-bold text-blue-600 hover:text-blue-700 transition-colors px-4">
+                {locale === 'de' ? 'Alle Lösungen in ' : 'View all '} {cat.data.title}
+                <svg class="ml-1 h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 10a.75.75 0 0 1 .75-.75h10.638L10.23 5.29a.75.75 0 1 1 1.04-1.08l5.5 5.25a.75.75 0 0 1 0 1.08l-5.5 5.25a.75.75 0 1 1-1.04-1.08l4.158-3.96H3.75A.75.75 0 0 1 3 10Z" clip-rule="evenodd"/></svg>
+              </a>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  </section>
+
+  <section class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <h2 class="text-3xl font-bold text-slate-900 mb-8">{t('index.categories.title')}</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {sortedCategories.map(cat => {
+        const catId = cat.id.endsWith(locale) && locale !== 'en' ? cat.id.slice(0, -locale.length) : cat.id;
+        return (
+          <UseCaseCard 
+            href={l(`/${catId}`)}
+            title={cat.data.title}
+            description={cat.data.tagline}
+          />
+        );
+      })}
+    </div>
+  </section>
+</Site>

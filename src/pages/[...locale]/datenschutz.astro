@@ -1,0 +1,22 @@
+---
+import { getEntry, render } from 'astro:content';
+import Site from '../../layouts/Site.astro';
+
+export function getStaticPaths() {
+  return [
+    { params: { locale: undefined } },
+    { params: { locale: 'de' } },
+  ];
+}
+
+const locale = (Astro.params.locale ?? 'en') as 'en' | 'de';
+const entry = await getEntry('legal', `${locale}/datenschutz`);
+if (!entry) throw new Error(`Missing legal/${locale}/datenschutz.md`);
+const { Content } = await render(entry);
+---
+<Site title={entry.data.title}>
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16 article-body">
+    <h1>{entry.data.title}</h1>
+    <Content />
+  </div>
+</Site>

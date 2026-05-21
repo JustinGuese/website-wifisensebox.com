@@ -1,0 +1,171 @@
+---
+import Site from '../../layouts/Site.astro';
+import Hero from '../../components/Hero.astro';
+import WaitlistForm from '../../components/WaitlistForm.astro';
+import { defaultLocale, useTranslations } from '../../i18n/t';
+import type { Locale } from '../../i18n/t';
+
+export async function getStaticPaths() {
+  return [
+    { params: { locale: undefined } },
+    { params: { locale: 'de' } },
+  ];
+}
+
+const { locale: rawLocale } = Astro.params;
+const locale = (rawLocale || defaultLocale) as Locale;
+const t = useTranslations(locale);
+const isDe = locale === 'de';
+
+const title = isDe ? "Wie es funktioniert" : "How it Works";
+const description = isDe 
+  ? "Erfahren Sie mehr über die WiFi-Sensing- und Radar-Technologie hinter WifiSenseBox." 
+  : "Learn about the WiFi sensing and radar technology behind WifiSenseBox.";
+---
+
+<Site title={`${title} | WifiSenseBox`} description={description}>
+  <Hero 
+    title={title}
+    subtitle={isDe 
+      ? "Die Wissenschaft des Sehens ohne Kameras. Hochpräzise WiFi-Sensorik für absolute Privatsphäre." 
+      : "The science of seeing without cameras. High-precision WiFi sensing for total privacy."}
+    usecase="how-it-works"
+    locale={locale}
+  />
+
+  <section class="py-20 bg-white">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
+        <div>
+          <h2 class="text-3xl font-bold text-slate-900 mb-6">
+            {isDe ? "WiFi als Sensor: Das Unsichtbare sichtbar machen" : "WiFi as a Sensor: Seeing the Unseen"}
+          </h2>
+          <p class="text-lg text-slate-600 leading-relaxed mb-6">
+            {isDe 
+              ? "Herkömmliches WiFi überträgt Daten. WifiSenseBox nutzt WiFi-Wellen jedoch als hochauflösendes Radarsystem. Jeder Mensch in einem Raum besteht zu ca. 70 % aus Wasser, was WiFi-Signale auf eine ganz spezifische Weise reflektiert und bricht."
+              : "Traditional WiFi carries data. But WifiSenseBox uses WiFi waves as a high-resolution radar system. Every human in a room is approximately 70% water, which reflects and refracts WiFi signals in a very specific way."}
+          </p>
+          <p class="text-lg text-slate-600 leading-relaxed">
+            {isDe
+              ? "Durch die Analyse dieser Signalstörungen (Channel State Information - CSI) kann WifiSenseBox Anwesenheit, Position und sogar die Atembewegung des Brustkorbs erkennen – ohne jemals ein Bild aufzunehmen."
+              : "By analyzing these signal disruptions (Channel State Information - CSI), WifiSenseBox can detect presence, posture, and even the micro-movements of a chest during breathing — without ever capturing an image."}
+          </p>
+        </div>
+        <div class="rounded-3xl bg-slate-50 p-8 border border-slate-100 shadow-inner">
+          <div class="space-y-6">
+            <div class="flex gap-4">
+              <div class="h-10 w-10 shrink-0 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold">1</div>
+              <div>
+                <h4 class="font-bold text-slate-900">{isDe ? "Signalemission" : "Signal Emission"}</h4>
+                <p class="text-sm text-slate-500">{isDe ? "Standard-WiFi-Wellen füllen den Raum." : "Standard WiFi waves flood the environment."}</p>
+              </div>
+            </div>
+            <div class="flex gap-4">
+              <div class="h-10 w-10 shrink-0 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold">2</div>
+              <div>
+                <h4 class="font-bold text-slate-900">{isDe ? "Menschliche Interaktion" : "Human Interaction"}</h4>
+                <p class="text-sm text-slate-500">{isDe ? "Ihr Körper moduliert die Funkwellen bei jeder Bewegung." : "Your body modulates the radio waves with every move."}</p>
+              </div>
+            </div>
+            <div class="flex gap-4">
+              <div class="h-10 w-10 shrink-0 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold">3</div>
+              <div>
+                <h4 class="font-bold text-slate-900">{isDe ? "KI-Analyse" : "AI Analysis"}</h4>
+                <p class="text-sm text-slate-500">{isDe ? "Deep-Learning-Modelle isolieren das 'Lebenszeichen' vom Rauschen." : "Deep learning models isolate the 'rhythm of life' from the noise."}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-20 bg-slate-900 text-white">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <h2 class="text-3xl font-bold mb-12">{isDe ? "Drei Technologien in einem Gerät" : "Three Technologies in One Device"}</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+        <div class="p-6">
+          <div class="text-blue-400 text-4xl mb-4 font-black">CSI</div>
+          <h3 class="text-xl font-bold mb-4">{isDe ? "WiFi-Sensing" : "WiFi Sensing"}</h3>
+          <p class="text-slate-400 text-sm leading-relaxed">
+            {isDe 
+              ? "Nutzt bestehende WiFi-Signale, um durch Wände hindurch Präsenz zu erkennen. Es ist der Grundstein für die raumübergreifende Überwachung."
+              : "Uses existing WiFi signals to detect presence through walls. It's the foundation for multi-room coverage."}
+          </p>
+        </div>
+        <div class="p-6 border-x border-white/10">
+          <div class="text-blue-400 text-4xl mb-4 font-black">60GHz</div>
+          <h3 class="text-xl font-bold mb-4">{isDe ? "Präzisions-Radar" : "Precision Radar"}</h3>
+          <p class="text-slate-400 text-sm leading-relaxed">
+            {isDe 
+              ? "Ein dedizierter mmWave-Radar-Chip ermöglicht sub-millimetergenaue Erkennung von Stürzen und Vitalwerten im Nahbereich."
+              : "A dedicated mmWave radar chip enables sub-millimeter precision for fall detection and vitals in close range."}
+          </p>
+        </div>
+        <div class="p-6">
+          <div class="text-blue-400 text-4xl mb-4 font-black">EDGE</div>
+          <h3 class="text-xl font-bold mb-4">{isDe ? "Lokale KI" : "Edge Computing"}</h3>
+          <p class="text-slate-400 text-sm leading-relaxed">
+            {isDe 
+              ? "Alle Daten werden direkt auf dem Gerät verarbeitet. Es verlassen keine Rohdaten Ihre vier Wände – maximale Sicherheit garantiert."
+              : "All data is processed directly on the device. No raw signal data ever leaves your home — maximum security guaranteed."}
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-24 bg-white">
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-16">
+        <h2 class="text-3xl font-bold text-slate-900">{isDe ? "Keine zusätzliche Hardware" : "No Additional Hardware"}</h2>
+        <p class="mt-4 text-lg text-slate-600">
+          {isDe 
+            ? "Vergessen Sie komplizierte Gateways, Hubs oder kilometerlange Kabel. WifiSenseBox ist ein echtes Standalone-System."
+            : "Forget complicated gateways, hubs, or miles of cabling. WifiSenseBox is a true standalone system."}
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="flex gap-6 p-8 rounded-2xl bg-blue-50 border border-blue-100">
+          <svg class="h-8 w-8 text-blue-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+          </svg>
+          <div>
+            <h4 class="font-bold text-slate-900 mb-2">{isDe ? "Plug & Play" : "Plug & Play"}</h4>
+            <p class="text-sm text-slate-600 leading-relaxed">
+              {isDe 
+                ? "Stecken Sie die WifiSenseBox in eine beliebige Steckdose. Sie verbindet sich direkt mit Ihrem WLAN und ist in weniger als 2 Minuten einsatzbereit."
+                : "Plug WifiSenseBox into any standard outlet. It connects directly to your WiFi and is ready in under 2 minutes."}
+            </p>
+          </div>
+        </div>
+        <div class="flex gap-6 p-8 rounded-2xl bg-emerald-50 border border-emerald-100">
+          <svg class="h-8 w-8 text-emerald-600 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <div>
+            <h4 class="font-bold text-slate-900 mb-2">{isDe ? "Extrem kosteneffizient" : "Extremely Cost-Efficient"}</h4>
+            <p class="text-sm text-slate-600 leading-relaxed">
+              {isDe 
+                ? "Da wir auf teure Linsen und komplexe Optik verzichten, können wir Enterprise-Technologie zum Preis eines einfachen Smart-Home-Gadgets anbieten."
+                : "Because we skip expensive lenses and complex optics, we can offer enterprise-grade technology at the price of a simple smart home gadget."}
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div id="waitlist" class="bg-blue-600 py-20">
+    <div class="max-w-4xl mx-auto px-4 text-center">
+      <h2 class="text-3xl font-bold text-white mb-8">{isDe ? "Bereit für die Zukunft der Sensorik?" : "Ready for the future of sensing?"}</h2>
+      <p class="text-blue-100 text-lg mb-10">
+        {isDe ? "Sichern Sie sich einen der limitierten Plätze in der Founders Edition." : "Secure your spot in our limited Founders Edition."}
+      </p>
+      <div class="flex justify-center">
+        <WaitlistForm locale={locale} variant="dark" usecase="how-it-works" />
+      </div>
+    </div>
+  </div>
+</Site>
