@@ -1,0 +1,138 @@
+---
+import Site from '../../layouts/Site.astro';
+import { defaultLocale } from '../../i18n/t';
+
+export function getStaticPaths() {
+  return [
+    { params: { locale: undefined }, locale: 'en' },
+    { params: { locale: 'de' }, locale: 'de' },
+  ];
+}
+
+const locale = (Astro.currentLocale || defaultLocale) as 'en' | 'de';
+const isDe = locale === 'de';
+
+const formspreeId = import.meta.env.PUBLIC_FORMSPREE_ID || 'xnjrdjwg';
+const landingPage = Astro.url.pathname;
+
+const title = isDe ? 'Kontakt | WifiSenseBox' : 'Contact | WifiSenseBox';
+const description = isDe
+  ? 'Kontaktieren Sie das WifiSenseBox-Team — wir antworten in der Regel innerhalb eines Werktages.'
+  : 'Get in touch with the WifiSenseBox team — we usually reply within one business day.';
+
+const sent = Astro.url.searchParams.get('sent') === '1';
+---
+<Site title={title} description={description}>
+  <section class="relative overflow-hidden bg-gradient-to-b from-slate-50 to-white">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-10 text-center">
+      <span class="inline-block text-xs font-bold uppercase tracking-widest text-blue-600 mb-3">
+        {isDe ? 'Kontakt' : 'Contact'}
+      </span>
+      <h1 class="text-4xl sm:text-5xl font-extrabold text-slate-900 leading-tight mb-4">
+        {isDe ? 'Lassen Sie uns reden.' : "Let's talk."}
+      </h1>
+      <p class="text-lg text-slate-600 max-w-2xl mx-auto">
+        {isDe
+          ? 'Fragen zu Pilotprojekten, Integration, Preisen oder Pressekontakt? Schreiben Sie uns — wir antworten in der Regel innerhalb eines Werktages.'
+          : 'Questions about pilots, integration, pricing, or press? Drop us a note — we usually reply within one business day.'}
+      </p>
+    </div>
+  </section>
+
+  <section class="pb-24">
+    <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+      {sent && (
+        <div class="mb-6 p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm">
+          {isDe
+            ? 'Danke! Ihre Nachricht ist angekommen — wir melden uns in Kürze.'
+            : "Thanks! Your message is in — we'll be in touch shortly."}
+        </div>
+      )}
+
+      <form
+        action={`https://formspree.io/f/${formspreeId}`}
+        method="POST"
+        class="rounded-2xl border border-slate-200 bg-white shadow-xl shadow-slate-900/5 p-6 sm:p-8 space-y-5"
+      >
+        <input type="hidden" name="form" value="contact" />
+        <input type="hidden" name="locale" value={locale} />
+        <input type="hidden" name="landing_page" value={landingPage} />
+        <input type="hidden" name="_next" value={`${landingPage}?sent=1`} />
+        <input type="text" name="_gotcha" style="display:none" />
+
+        <div>
+          <label for="name" class="block text-sm font-semibold text-slate-700 mb-1.5">
+            {isDe ? 'Name' : 'Name'}
+          </label>
+          <input
+            id="name"
+            name="name"
+            type="text"
+            required
+            autocomplete="name"
+            class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-base text-slate-900 placeholder-slate-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            placeholder={isDe ? 'Ihr Name' : 'Your name'}
+          />
+        </div>
+
+        <div>
+          <label for="email" class="block text-sm font-semibold text-slate-700 mb-1.5">
+            {isDe ? 'E-Mail' : 'Email'}
+          </label>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            required
+            autocomplete="email"
+            class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-base text-slate-900 placeholder-slate-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            placeholder={isDe ? 'sie@firma.com' : 'you@company.com'}
+          />
+        </div>
+
+        <div>
+          <label for="phone" class="block text-sm font-semibold text-slate-700 mb-1.5">
+            {isDe ? 'Telefon ' : 'Phone '}
+            <span class="font-normal text-slate-400">{isDe ? '(optional)' : '(optional)'}</span>
+          </label>
+          <input
+            id="phone"
+            name="phone"
+            type="tel"
+            autocomplete="tel"
+            class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-base text-slate-900 placeholder-slate-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            placeholder={isDe ? '+49 …' : '+1 …'}
+          />
+        </div>
+
+        <div>
+          <label for="message" class="block text-sm font-semibold text-slate-700 mb-1.5">
+            {isDe ? 'Nachricht' : 'Message'}
+          </label>
+          <textarea
+            id="message"
+            name="message"
+            required
+            rows="6"
+            class="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-base text-slate-900 placeholder-slate-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            placeholder={isDe ? 'Worum geht es?' : 'How can we help?'}
+          ></textarea>
+        </div>
+
+        <button
+          type="submit"
+          class="w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl text-base font-semibold text-white bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 shadow-md shadow-blue-600/25 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-transform active:scale-[0.99]"
+        >
+          {isDe ? 'Nachricht senden' : 'Send message'}
+          <svg class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 10a.75.75 0 0 1 .75-.75h10.638L10.23 5.29a.75.75 0 1 1 1.04-1.08l5.5 5.25a.75.75 0 0 1 0 1.08l-5.5 5.25a.75.75 0 1 1-1.04-1.08l4.158-3.96H3.75A.75.75 0 0 1 3 10Z" clip-rule="evenodd"/></svg>
+        </button>
+
+        <p class="text-xs text-slate-500 text-center">
+          {isDe
+            ? 'Mit dem Absenden stimmen Sie unserer Datenschutzerklärung zu.'
+            : 'By submitting, you agree to our privacy policy.'}
+        </p>
+      </form>
+    </div>
+  </section>
+</Site>

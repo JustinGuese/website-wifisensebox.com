@@ -118,14 +118,89 @@ const getUseCasesForCategory = (catId) => {
             </div>
           </div>
 
+          <a href={l('/contact')} class="hover:text-slate-900 py-2">{locale === 'de' ? 'Kontakt' : 'Contact'}</a>
+
           <LocaleSwitcher />
         </div>
         <div class="flex items-center gap-2">
-          <a href="#waitlist" class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700">
+          <a href="#waitlist" class="hidden sm:inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700">
+            {t('nav.waitlist')}
+          </a>
+          <button
+            id="mobile-menu-toggle"
+            type="button"
+            class="md:hidden inline-flex items-center justify-center h-10 w-10 rounded-md text-slate-700 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            aria-label="Toggle navigation menu"
+            aria-controls="mobile-menu"
+            aria-expanded="false"
+          >
+            <svg id="mobile-menu-icon-open" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" /></svg>
+            <svg id="mobile-menu-icon-close" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+          </button>
+        </div>
+      </nav>
+
+      <div id="mobile-menu" class="md:hidden hidden border-t border-slate-100 bg-white">
+        <div class="px-4 py-3 space-y-1 text-sm font-medium text-slate-700 max-h-[80vh] overflow-y-auto">
+          <a href={l('/how-it-works')} class="block px-3 py-2 rounded-md hover:bg-slate-50">{t('nav.how_it_works')}</a>
+
+          {sortedCategories.map(cat => {
+            const catId = cat.id.split('.')[0];
+            const ucs = getUseCasesForCategory(catId);
+            return (
+              <details class="group">
+                <summary class="flex items-center justify-between px-3 py-2 rounded-md hover:bg-slate-50 cursor-pointer list-none">
+                  <span>{cat.data.title}</span>
+                  <svg class="h-4 w-4 transition-transform group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+                </summary>
+                <div class="pl-4 py-1 space-y-1">
+                  {ucs.map(uc => {
+                    const ucId = uc.id.split('.')[0];
+                    return (
+                      <a href={l(`/${catId}/${ucId}`)} class="block px-3 py-2 text-sm text-slate-600 hover:bg-slate-50 rounded-md">{uc.data.title}</a>
+                    );
+                  })}
+                  <a href={l('/roi-calculator')} class="block px-3 py-2 text-sm font-semibold text-blue-600 hover:bg-slate-50 rounded-md">
+                    {locale === 'de' ? 'ROI-Rechner' : 'ROI Calculator'}
+                  </a>
+                </div>
+              </details>
+            );
+          })}
+
+          <details class="group">
+            <summary class="flex items-center justify-between px-3 py-2 rounded-md hover:bg-slate-50 cursor-pointer list-none">
+              <span>{locale === 'de' ? 'Rechtliches' : 'Legal'}</span>
+              <svg class="h-4 w-4 transition-transform group-open:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
+            </summary>
+            <div class="pl-4 py-1 space-y-1">
+              <a href={l('/impressum')} class="block px-3 py-2 text-sm text-slate-600 hover:bg-slate-50 rounded-md">Impressum</a>
+              <a href={l('/datenschutz')} class="block px-3 py-2 text-sm text-slate-600 hover:bg-slate-50 rounded-md">{locale === 'de' ? 'Datenschutz' : 'Privacy'}</a>
+              <a href={l('/agb')} class="block px-3 py-2 text-sm text-slate-600 hover:bg-slate-50 rounded-md">{locale === 'de' ? 'AGB' : 'Terms'}</a>
+            </div>
+          </details>
+
+          <a href={l('/contact')} class="block px-3 py-2 rounded-md hover:bg-slate-50">{locale === 'de' ? 'Kontakt' : 'Contact'}</a>
+
+          <div class="border-t border-slate-100 mt-2 pt-2 flex items-center gap-2">
+            {locales.map((loc) => (
+              <a
+                href={getRelativePath(Astro.url, loc)}
+                class:list={[
+                  'px-3 py-1.5 rounded-md text-xs font-bold uppercase tracking-widest',
+                  locale === loc ? 'bg-slate-900 text-white' : 'text-slate-600 hover:bg-slate-100'
+                ]}
+              >
+                {loc}
+              </a>
+            ))}
+          </div>
+
+          <a href="#waitlist" class="block mt-2 px-3 py-3 rounded-md text-center text-white bg-blue-600 hover:bg-blue-700 font-semibold">
             {t('nav.waitlist')}
           </a>
         </div>
-      </nav>
+      </div>
     </header>
 
     <main class="flex-grow">
@@ -136,6 +211,7 @@ const getUseCasesForCategory = (catId) => {
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-sm text-slate-500">
         <p>&copy; {new Date().getFullYear()} WifiSenseBox. All rights reserved.</p>
         <div class="mt-4 space-x-4">
+          <a href={l('/contact')} class="hover:text-slate-900">{locale === 'de' ? 'Kontakt' : 'Contact'}</a>
           <a href={l('/impressum')} class="hover:text-slate-900">Impressum</a>
           <a href={l('/datenschutz')} class="hover:text-slate-900">Datenschutz</a>
           <a href={l('/agb')} class="hover:text-slate-900">{locale === 'de' ? 'AGB' : 'Terms'}</a>
@@ -161,6 +237,24 @@ const getUseCasesForCategory = (catId) => {
     </div>
 
     <script is:inline>
+      (() => {
+        const btn = document.getElementById('mobile-menu-toggle');
+        const menu = document.getElementById('mobile-menu');
+        const iconOpen = document.getElementById('mobile-menu-icon-open');
+        const iconClose = document.getElementById('mobile-menu-icon-close');
+        if (btn && menu) {
+          const setOpen = (open) => {
+            menu.classList.toggle('hidden', !open);
+            btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+            iconOpen?.classList.toggle('hidden', open);
+            iconClose?.classList.toggle('hidden', !open);
+          };
+          btn.addEventListener('click', () => {
+            setOpen(menu.classList.contains('hidden'));
+          });
+          menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => setOpen(false)));
+        }
+      })();
       (() => {
         const bar = document.getElementById('sticky-cta');
         if (!bar) return;
