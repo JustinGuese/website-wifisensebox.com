@@ -55,10 +55,10 @@ const initial = (Astro.url.searchParams.get('uc') || '') as string;
             : 'Industry-median recovery rates. No hand-waved 10× marketing math.'}</p>
         </div>
         <div class="p-4 rounded-xl bg-blue-50/70 border border-blue-100">
-          <div class="font-bold text-slate-900 mb-1">{isDe ? 'Hardware zum Selbstkostenpreis' : 'Hardware at cost'}</div>
+          <div class="font-bold text-slate-900 mb-1">{isDe ? 'Einmalige Hardware' : 'One-time hardware'}</div>
           <p class="text-slate-600">{isDe
-            ? '49 $ einmalig pro Sensor. Keine Hubs, keine NVRs, keine versteckten Gebühren.'
-            : '$49 one-time per sensor. No hubs, no NVRs, no hidden fees.'}</p>
+            ? '199 € einmalig pro Router. Keine Hubs, keine NVRs, keine versteckten Gebühren.'
+            : '$199 one-time per router. No hubs, no NVRs, no hidden fees.'}</p>
         </div>
         <div class="p-4 rounded-xl bg-blue-50/70 border border-blue-100">
           <div class="font-bold text-slate-900 mb-1">{isDe ? '100% DSGVO-konform' : '100% GDPR-compliant'}</div>
@@ -77,8 +77,8 @@ const initial = (Astro.url.searchParams.get('uc') || '') as string;
       </h2>
       <p class="text-lg text-slate-300 mb-8">
         {isDe
-          ? 'Founders Edition: $49 Sensor + 3 Monate Software gratis für die ersten 1.000 Anmeldungen.'
-          : "Founders Edition: $49 sensor + 3 months of software free for the first 1,000 sign-ups."}
+          ? 'Founders Edition: 199 $ Router + 1 Monat Software gratis für die ersten 1.000 Anmeldungen.'
+          : "Founders Edition: $199 router + 1 month of software free for the first 1,000 sign-ups."}
       </p>
       <div class="flex justify-center">
         <WaitlistForm locale={locale} variant="dark" usecase="roi-calculator" />

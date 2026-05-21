@@ -32,8 +32,8 @@ interface UseCase {
   headlineMetric?: (v: Record<string, number>) => { label: string; value: string };
 }
 
-const HARDWARE_COST = 49;
-const SUBSCRIPTION_MONTHLY = 29;
+const HARDWARE_COST = 199;
+const SUBSCRIPTION_MONTHLY = 99;
 
 const getUseCases = (isDe: boolean): UseCase[] => [
   {
@@ -51,7 +51,7 @@ const getUseCases = (isDe: boolean): UseCase[] => [
     ],
     problemCost: (v) => v.rooms * v.energyPerRoom * (v.vacancy / 100),
     recoveryRate: () => 0.45,
-    unitsNeeded: (v) => Math.max(1, Math.ceil(v.rooms / 3)),
+    unitsNeeded: () => 1,
     headlineMetric: (v) => ({
       label: isDe ? 'Verschwendete Energie/Jahr (Status Quo)' : 'Wasted energy/yr (status quo)',
       value: formatCurrency(v.rooms * v.energyPerRoom * (v.vacancy / 100), isDe),
@@ -72,7 +72,7 @@ const getUseCases = (isDe: boolean): UseCase[] => [
     ],
     problemCost: (v) => (v.seniors * v.fallRate / 100) * v.costPerFall,
     recoveryRate: () => 0.7,
-    unitsNeeded: (v) => Math.max(1, Math.ceil(v.seniors / 2)),
+    unitsNeeded: (v) => Math.max(1, Math.ceil(v.seniors / 20)),
     headlineMetric: (v) => ({
       label: isDe ? 'Erwartete Sturzkosten/Jahr' : 'Expected fall losses/yr',
       value: formatCurrency((v.seniors * v.fallRate / 100) * v.costPerFall, isDe),
@@ -114,7 +114,7 @@ const getUseCases = (isDe: boolean): UseCase[] => [
     ],
     problemCost: (v) => v.monthlyRevenue * 12 * v.stores * (v.uplift / 100),
     recoveryRate: () => 1,
-    unitsNeeded: (v) => Math.max(1, v.stores * 2),
+    unitsNeeded: (v) => Math.max(1, v.stores),
     headlineMetric: (v) => ({
       label: isDe ? 'Freigesetzter Umsatz/Jahr' : 'Revenue unlocked/yr',
       value: formatCurrency(v.monthlyRevenue * 12 * v.stores * (v.uplift / 100), isDe),
@@ -135,7 +135,7 @@ const getUseCases = (isDe: boolean): UseCase[] => [
     ],
     problemCost: (v) => v.cells * v.falseStopHrs * 50 * v.downtimeCost,
     recoveryRate: () => 0.8,
-    unitsNeeded: (v) => Math.max(1, v.cells),
+    unitsNeeded: () => 1,
     headlineMetric: (v) => ({
       label: isDe ? 'Stillstandskosten/Jahr (Status Quo)' : 'Downtime cost/yr (status quo)',
       value: formatCurrency(v.cells * v.falseStopHrs * 50 * v.downtimeCost, isDe),
