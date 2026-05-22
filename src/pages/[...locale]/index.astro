@@ -4,6 +4,7 @@ import Hero from '../../components/Hero.astro';
 import UseCaseCard from '../../components/UseCaseCard.astro';
 import SensingDemo from '../../components/SensingDemo';
 import PriceTable from '../../components/PriceTable.astro';
+import FaqAccordion from '../../components/FaqAccordion.astro';
 import WaitlistForm from '../../components/WaitlistForm.astro';
 import { getCollection } from 'astro:content';
 import { defaultLocale, useTranslations } from '../../i18n/t';
@@ -15,9 +16,16 @@ export function getStaticPaths() {
   ];
 }
 
-const locale = Astro.currentLocale || defaultLocale;
+const locale = Astro.params.locale || defaultLocale;
 const t = useTranslations(locale as any);
 const l = (path: string) => locale === defaultLocale ? path : `/${locale}${path}`;
+
+const generalFaq = [
+  { q: t('faq.general.q1'), a: t('faq.general.a1') },
+  { q: t('faq.general.q2'), a: t('faq.general.a2') },
+  { q: t('faq.general.q3'), a: t('faq.general.a3') },
+  { q: t('faq.general.q4'), a: t('faq.general.a4') },
+];
 
 const allCategories = await getCollection('categories', (entry) => entry.data.locale === locale);
 const sortedCategories = allCategories.sort((a, b) => a.data.rank - b.data.rank);
@@ -218,6 +226,15 @@ const featuredUsecases = sortedCategories
       <h2 class="text-3xl font-bold text-center text-slate-900 mb-4">{t('index.pricing.title')}</h2>
       <p class="text-center text-slate-600 mb-12">{t('index.pricing.subtitle')}</p>
       <PriceTable />
+      <div class="mt-12 text-center">
+        <p class="text-slate-500 mb-2">
+          {locale === 'de' ? 'Interessiert an der geschäftlichen Seite?' : 'Interested in the business side?'}
+        </p>
+        <a href={l('/investor-relations')} class="inline-flex items-center gap-2 text-blue-600 font-bold hover:text-blue-700">
+          <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
+          {t('nav.investors')}
+        </a>
+      </div>
     </div>
   </section>
 
@@ -289,6 +306,14 @@ const featuredUsecases = sortedCategories
           />
         );
       })}
+    </div>
+  </section>
+
+  <section class="py-24 bg-slate-50 border-y border-slate-100">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="max-w-3xl mx-auto">
+        <FaqAccordion faq={generalFaq} />
+      </div>
     </div>
   </section>
 

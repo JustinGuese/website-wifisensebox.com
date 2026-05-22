@@ -70,6 +70,28 @@ const initial = (Astro.url.searchParams.get('uc') || '') as string;
     </div>
   </section>
 
+  <section class="py-12 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="bg-slate-900 rounded-3xl p-8 md:p-12 text-white relative overflow-hidden">
+        <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+          <div class="max-w-xl text-left">
+            <h2 class="text-3xl font-bold mb-4">{locale === 'de' ? 'Interessiert an der Skalierung?' : 'Interested in the Scale?'}</h2>
+            <p class="text-slate-400 text-lg">
+              {locale === 'de' 
+                ? 'Unsere ROI-Zahlen sind erst der Anfang. Entdecken Sie unser Geschäftsmodell und wie wir planen, den 120-Milliarden-Dollar-Markt für Sensorik zu dominieren.' 
+                : 'Our ROI numbers are just the beginning. Discover our business model and how we plan to dominate the $120B sensing market.'}
+            </p>
+          </div>
+          <a href={locale === 'de' ? '/de/investor-relations' : '/investor-relations'} class="inline-flex items-center px-8 py-4 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-bold transition-colors whitespace-nowrap">
+            {t('nav.investors')}
+            <svg class="ml-2 h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>
+          </a>
+        </div>
+        <div class="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 w-64 h-64 bg-blue-500/20 rounded-full blur-3xl"></div>
+      </div>
+    </div>
+  </section>
+
   <section id="waitlist" class="py-20 bg-slate-900 text-white">
     <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
       <h2 class="text-3xl sm:text-4xl font-extrabold mb-4">

@@ -1,6 +1,7 @@
 ---
 import Site from '../../layouts/Site.astro';
 import Hero from '../../components/Hero.astro';
+import FaqAccordion from '../../components/FaqAccordion.astro';
 import WaitlistForm from '../../components/WaitlistForm.astro';
 import { defaultLocale, useTranslations } from '../../i18n/t';
 import type { Locale } from '../../i18n/t';
@@ -16,6 +17,12 @@ const { locale: rawLocale } = Astro.params;
 const locale = (rawLocale || defaultLocale) as Locale;
 const t = useTranslations(locale);
 const isDe = locale === 'de';
+
+const techFaq = [
+  { q: t('faq.tech.q1'), a: t('faq.tech.a1') },
+  { q: t('faq.tech.q2'), a: t('faq.tech.a2') },
+  { q: t('faq.tech.q3'), a: t('faq.tech.a3') },
+];
 
 const title = isDe ? "Wie es funktioniert" : "How it Works";
 const description = isDe 
@@ -154,6 +161,12 @@ const description = isDe
           </div>
         </div>
       </div>
+    </div>
+  </section>
+
+  <section class="py-12 bg-white">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+      <FaqAccordion faq={techFaq} />
     </div>
   </section>
 

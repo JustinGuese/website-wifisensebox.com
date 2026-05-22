@@ -65,6 +65,15 @@ WifiSenseBox provides privacy-first ambient sensing solutions using GDPR-complia
 - **Component:** `src/components/WaitlistForm.astro`
 - **Provider:** [Formspree](https://formspree.io)
 - **Endpoint:** Configured via `PUBLIC_FORMSPREE_ID` env var.
+- **Success redirect:** Formspree's `_next` hidden field returns the user to the landing page with `?subscribed=1` (waitlist) or `?sent=1` (contact form).
+
+### Analytics — Meta Pixel
+
+- **Base pixel:** Installed inline in `<head>` in `src/layouts/Site.astro` (pixel ID `1785955559052587`). Fires `PageView` on every page.
+- **Lead event policy:** `Lead` fires **only on post-submission success**, never on click or submit, to keep lead quality high:
+  - **Waitlist:** `src/components/WaitlistForm.astro` checks for `?subscribed=1` after the Formspree redirect, fires `Lead` with `content_name: 'Waitlist Subscription'`, then strips the param via `URLSearchParams` + `history.replaceState` to prevent double-fire on refresh.
+  - **Contact:** `src/pages/[...locale]/contact.astro` mirrors the same pattern with `?sent=1` and `content_name: 'Contact Form Submission'`.
+- **Pattern when adding new lead events:** redirect to a success param, fire `fbq('track', 'Lead', { content_name, content_category })` from an `is:inline` IIFE, then delete the success param. Do not fire on submit handlers — bots and validation failures inflate counts.
 
 ### Legal Requirements
 

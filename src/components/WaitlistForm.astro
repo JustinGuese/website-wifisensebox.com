@@ -37,6 +37,7 @@ const isDark = variant === 'dark';
     <input type="hidden" name="usecase" value={usecase} />
     <input type="hidden" name="locale" value={locale} />
     <input type="hidden" name="landing_page" value={landingPage} />
+    <input type="hidden" name="_next" value={`${landingPage}${landingPage.includes('?') ? '&' : '?'}subscribed=1#waitlist`} />
     <input type="text" name="_gotcha" style="display:none" />
 
     <label for="email-address" class="sr-only">Email address</label>
@@ -89,3 +90,20 @@ const isDark = variant === 'dark';
     </div>
   )}
 </div>
+
+<script is:inline>
+  (() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('subscribed') !== '1') return;
+    if (typeof window.fbq === 'function') {
+      window.fbq('track', 'Lead', {
+        content_name: 'Waitlist Subscription',
+        content_category: 'Waitlist'
+      });
+    }
+    params.delete('subscribed');
+    const qs = params.toString();
+    const newUrl = window.location.pathname + (qs ? '?' + qs : '') + window.location.hash;
+    window.history.replaceState({}, '', newUrl);
+  })();
+</script>
