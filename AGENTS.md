@@ -67,6 +67,13 @@ WifiSenseBox provides privacy-first ambient sensing solutions using GDPR-complia
 - **Endpoint:** Configured via `PUBLIC_FORMSPREE_ID` env var.
 - **Success redirect:** Formspree's `_next` hidden field returns the user to the landing page with `?subscribed=1` (waitlist) or `?sent=1` (contact form).
 
+### Analytics — Google Analytics (gtag.js)
+
+- **Measurement ID:** `G-6F42PQXVQ7`
+- **Installed:** inline `<script>` in `<head>` of `src/layouts/Site.astro`. Runs on every page automatically (default `config` call sends a page_view).
+- **Custom events:** call `window.gtag('event', '<name>', { ... })` from page scripts. Keep event names snake_case (GA4 convention).
+- **Lead events:** GA4's standard `generate_lead` event fires alongside the Meta Pixel `Lead` event (same success-redirect pattern). Currently wired on the waitlist form (`form_name: 'waitlist'`) and contact form (`form_name: 'contact'`).
+
 ### Analytics — Meta Pixel
 
 - **Base pixel:** Installed inline in `<head>` in `src/layouts/Site.astro` (pixel ID `1785955559052587`). Fires `PageView` on every page.

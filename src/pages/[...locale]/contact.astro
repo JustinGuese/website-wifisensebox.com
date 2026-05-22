@@ -146,6 +146,12 @@ const sent = Astro.url.searchParams.get('sent') === '1';
           content_category: 'Contact'
         });
       }
+      if (typeof window.gtag === 'function') {
+        window.gtag('event', 'generate_lead', {
+          form_name: 'contact',
+          content_category: 'Contact'
+        });
+      }
       params.delete('sent');
       const qs = params.toString();
       const newUrl = window.location.pathname + (qs ? '?' + qs : '') + window.location.hash;

@@ -101,6 +101,12 @@ const isDark = variant === 'dark';
         content_category: 'Waitlist'
       });
     }
+    if (typeof window.gtag === 'function') {
+      window.gtag('event', 'generate_lead', {
+        form_name: 'waitlist',
+        content_category: 'Waitlist'
+      });
+    }
     params.delete('subscribed');
     const qs = params.toString();
     const newUrl = window.location.pathname + (qs ? '?' + qs : '') + window.location.hash;

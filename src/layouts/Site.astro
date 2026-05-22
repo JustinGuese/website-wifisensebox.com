@@ -65,6 +65,16 @@ const getUseCasesForCategory = (catId: string) => {
 
     <slot name="head" />
 
+    <!-- Google tag (gtag.js) -->
+    <script is:inline async src="https://www.googletagmanager.com/gtag/js?id=G-6F42PQXVQ7"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-6F42PQXVQ7');
+    </script>
+    <!-- End Google tag -->
+
     <!-- Meta Pixel Code -->
     <script is:inline>
       !function(f,b,e,v,n,t,s)
