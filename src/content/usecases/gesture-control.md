@@ -4,7 +4,7 @@ category: smart-home
 rank: 3
 heroTitle: Control Your Home With A Wave
 heroSubtitle: Affordable, standalone, and 100% GDPR-safe solution.
-painPoint: Cameras invade privacy and motion detector networks are often too expensive and complex.
+painPoint: Controlling a smart home means shouting at a voice assistant that wakes the house or fumbling for a phone app — both too clunky for the quick, quiet micro-adjustments of daily life.
 solution: WifiSenseBox provides an affordable, standalone, and 100% GDPR-compliant way to monitor your space.
 features:
   - icon: shield

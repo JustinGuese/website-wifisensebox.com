@@ -4,7 +4,7 @@ category: smart-home
 rank: 2
 heroTitle: Protect Your Home, Keep Your Privacy
 heroSubtitle: Affordable, standalone, and 100% GDPR-safe solution.
-painPoint: Cameras invade privacy and motion detector networks are often too expensive and complex.
+painPoint: Smart-home cameras turn every room into a potential hack or data-leak, forcing homeowners to trade away privacy for security — even in bedrooms and nurseries.
 solution: WifiSenseBox provides an affordable, standalone, and 100% GDPR-compliant way to monitor your space.
 features:
   - icon: shield

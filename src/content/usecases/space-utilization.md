@@ -4,7 +4,7 @@ category: smart-office
 rank: 3
 heroTitle: Data-Driven Office Design
 heroSubtitle: Affordable, standalone, and 100% GDPR-safe solution.
-painPoint: Cameras invade privacy and motion detector networks are often too expensive and complex.
+painPoint: In the hybrid era many offices run below 40% utilization, yet redesign and lease decisions are still made on gut feeling — and the cameras needed to get real data trigger employee backlash.
 solution: WifiSenseBox provides an affordable, standalone, and 100% GDPR-compliant way to monitor your space.
 features:
   - icon: shield

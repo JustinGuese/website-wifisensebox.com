@@ -4,7 +4,7 @@ category: industrial
 rank: 3
 heroTitle: Automated Safety Compliance
 heroSubtitle: Affordable, standalone, and 100% GDPR-safe solution.
-painPoint: Cameras invade privacy and motion detector networks are often too expensive and complex.
+painPoint: Confined-space entry relies on manual 'hole watches' and badge logs that miscount during shift changes and give zero visibility once a worker is inside — exactly where workers and would-be rescuers die.
 solution: WifiSenseBox provides an affordable, standalone, and 100% GDPR-compliant way to monitor your space.
 features:
   - icon: shield

@@ -4,7 +4,7 @@ category: retail
 rank: 3
 heroTitle: Defeat the Card-in-Slot Trick
 heroSubtitle: Affordable, standalone, and 100% GDPR-safe solution.
-painPoint: Cameras invade privacy and motion detector networks are often too expensive and complex.
+painPoint: Guests defeat keycard energy switches with a folded card, and PIR sensors cut the AC on still or sleeping guests — so hotels either waste 20-30% of their HVAC spend or field 'ghost in the room' complaints.
 solution: WifiSenseBox provides an affordable, standalone, and 100% GDPR-compliant way to monitor your space.
 features:
   - icon: shield

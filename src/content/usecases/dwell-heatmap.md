@@ -29,7 +29,7 @@ demoConfig:
   secondaryLabel: Hourly Trend
   privacyText: Get camera-grade behavioural insight with none of the privacy liability.
   ctaText: See your store heatmap
-painPoint: Cameras invade privacy and motion detector networks are often too expensive and complex.
+painPoint: Retailers are blind to which aisles and displays customers actually dwell at, and camera-based footfall analytics carry facial-recognition liability and GDPR paperwork.
 solution: WifiSenseBox provides an affordable, standalone, and 100% GDPR-compliant way to monitor your space.
 features:
   - icon: shield

@@ -4,7 +4,7 @@ category: retail
 rank: 2
 heroTitle: Optimize Restaurant Seating
 heroSubtitle: Affordable, standalone, and 100% GDPR-safe solution.
-painPoint: Cameras invade privacy and motion detector networks are often too expensive and complex.
+painPoint: Hosts are disconnected from the dining floor, so cleared tables sit empty for 5-10 minutes during the rush — and putting cameras over diners is a privacy liability.
 solution: WifiSenseBox provides an affordable, standalone, and 100% GDPR-compliant way to monitor your space.
 features:
   - icon: shield

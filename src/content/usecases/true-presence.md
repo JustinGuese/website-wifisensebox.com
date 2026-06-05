@@ -29,7 +29,7 @@ demoConfig:
   secondaryLabel: Activity (last 8s)
   privacyText: Your home knows you're there. It doesn't need to see you to know it.
   ctaText: Bring true presence home
-painPoint: Cameras invade privacy and motion detector networks are often too expensive and complex.
+painPoint: PIR occupancy sensors miss people who sit still, plunging readers, sleepers, and bathers into darkness — and they can't cover a whole home from a single spot.
 solution: WifiSenseBox provides an affordable, standalone, and 100% GDPR-compliant way to monitor your space.
 features:
   - icon: shield
